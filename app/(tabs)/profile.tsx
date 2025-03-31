@@ -2,9 +2,9 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { Settings, Bell, ClipboardList, LogOut } from 'lucide-react-native';
 
 const mockUser = {
-  name: 'John Doe',
+  name: 'Ahde Vefa',
   role: 'Volunteer Coordinator',
-  avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80',
+  avatar: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSg4LwfBL7FK4ux4_ignG112PwaoN1aYWrB6Q&s',
 };
 
 const menuItems = [

@@ -3,15 +3,13 @@ import { View, StyleSheet, Text, TouchableOpacity, Platform } from 'react-native
 import { Plus } from 'lucide-react-native';
 import * as Location from 'expo-location';
 import GoogleMapReact from 'google-map-react';
+import { Marker } from 'react-native-maps';
+import * as ImagePicker from 'expo-image-picker';
+import { FamilyDetailModal } from '../../components/FamilyDetailModal';
 
 // Only import MapView when on native platforms
 const MapView = Platform.select({
   native: () => require('react-native-maps').default,
-  default: () => null,
-})();
-
-const Marker = Platform.select({
-  native: () => require('react-native-maps').Marker,
   default: () => null,
 })();
 
@@ -21,7 +19,7 @@ const Callout = Platform.select({
 })();
 
 // Web marker component for Google Maps
-const WebMarker = ({ text }) => (
+const WebMarker = ({ text, lat, lng }: { text: string; lat: number; lng: number }) => (
   <div style={{
     position: 'absolute',
     transform: 'translate(-50%, -50%)',
@@ -47,9 +45,18 @@ const WebMarker = ({ text }) => (
   </div>
 );
 
+interface Family {
+  name: string;
+  memberCount: number;
+  address: string;
+  photos: string[];
+}
+
 export default function MapScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -63,6 +70,36 @@ export default function MapScreen() {
       setLocation(location);
     })();
   }, []);
+
+  const handleMarkerPress = () => {
+    setSelectedFamily({
+      name: 'Yilmaz Ailesi',
+      memberCount: 4,
+      address: 'Örnek Mahallesi, No: 123',
+      photos: [],
+    });
+    setIsModalVisible(true);
+  };
+
+  const handleAddPhoto = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled && selectedFamily) {
+        setSelectedFamily({
+          ...selectedFamily,
+          photos: [...selectedFamily.photos, result.assets[0].uri],
+        });
+      }
+    } catch (error) {
+      console.error('Fotoğraf seçme hatasi:', error);
+    }
+  };
 
   if (errorMsg) {
     return (
@@ -96,7 +133,9 @@ export default function MapScreen() {
             coordinate={{
               latitude: location.coords.latitude,
               longitude: location.coords.longitude,
-            }}>
+            }}
+            onPress={handleMarkerPress}
+          >
             <Callout>
               <Text>You are here</Text>
             </Callout>
@@ -105,6 +144,13 @@ export default function MapScreen() {
         <TouchableOpacity style={styles.addButton}>
           <Plus color="white" size={24} />
         </TouchableOpacity>
+
+        <FamilyDetailModal
+          isVisible={isModalVisible}
+          onClose={() => setIsModalVisible(false)}
+          familyData={selectedFamily}
+          onAddPhoto={handleAddPhoto}
+        />
       </View>
     );
   }
@@ -130,6 +176,13 @@ export default function MapScreen() {
       <TouchableOpacity style={styles.addButton}>
         <Plus color="white" size={24} />
       </TouchableOpacity>
+
+      <FamilyDetailModal
+        isVisible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        familyData={selectedFamily}
+        onAddPhoto={handleAddPhoto}
+      />
     </View>
   );
 }

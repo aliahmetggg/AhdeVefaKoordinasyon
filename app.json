@@ -29,6 +29,18 @@
       "eas": {
         "projectId": "8a2aad3e-1edd-4e20-9786-5cc196d28790"
       }
-    }
+    },
+    "android": {
+      "package": "com.meftunnn.boltexponativewind",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION"
+      ],
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyAgBGlbssj8dVtGR6XEUuM2JhGpj2IS024"
+        }
+      }
+    }    
   }
 }
